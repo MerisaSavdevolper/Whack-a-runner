@@ -2,15 +2,11 @@ const holes = document.querySelectorAll('.hole');
 const moles = document.querySelectorAll('.mole');
 const startButton = document.querySelector('#startButton');
 // TODO: Add the missing query selectors:
-const score = 
-document.querySelector('#score'); 
+const score = document.querySelector('#score'); 
 const timerDisplay = document.querySelector('#timer');
 
 let time = 0;
 let timer;
-let lastHole = 0;
-let points = 0;
-let difficulty = "hard";
 
 /**
  * Generates a random integer within a range.
@@ -72,16 +68,14 @@ function setDelay(difficulty) {
  * const holes = document.querySelectorAll('.hole');
  * chooseHole(holes) //> returns one of the 9 holes that you defined
  */
-function chooseHole(holes, lastHole = null) {
+function chooseHole(holes) {
      // TODO: Write your code here.
-     if (holes.length <= 1) {
-        throw new Error("The list of holes must contain at least two elements.");
-    }
-      const index = randomInteger(0, 8);
+    const index = randomInteger(0, holes.length - 1);
     const hole = holes[index]; 
     if (hole === lastHole) {
-        return chooseHole(holes, lastHole);
+        return chooseHole(holes);
     }
+    lastHole = hole;
     return hole; 
 }
   // TODO: Write your code here.
@@ -109,26 +103,14 @@ function chooseHole(holes, lastHole = null) {
 *
 */
 function gameOver() {
-  gameEnded = true; 
-  if (timer) {
-    clearInterval(timer); 
-    timer = null;
-  }
-  const gameOverMessage = document.getElementById("gameOverMessage"); 
-  if (gameOverMessage) {
-    gameOverMessage.textContent = "Game Over"; 
+  if (time > 0) {
+      let timeoutID = showUp();
+      return timeoutId;
   } else {
-    console.error("Game over message element not found.");
+      let gameStopped = stopGame();
+      return gameStopped;
   }
-  const score = document.getElementById("score"); 
-  if (score) {
-    score.textContent = `Final Score: ${points}`;console.log("Game has ended."); 
 }
-  }
-  // TODO: Write your code here
-  
-
-
 /**
 *
 * Calls the showAndHide() function with a specific delay and a hole.
@@ -140,10 +122,7 @@ function gameOver() {
 */
 function showUp() {
     const delay = setDelay(difficulty); 
-    const hole = chooseHole(holes, lastHole); 
-
-    lastHole = hole;
-
+    const hole = chooseHole(holes); 
     return showAndHide(hole, delay);
 }
 
@@ -168,13 +147,8 @@ function showAndHide(hole, delay) {
     }, delay);
     return timeoutID;
 }
-  // TODO: call the toggleVisibility function so that it adds the 'show' class.
-  
-  
-    // TODO: call the toggleVisibility function so that it removes the 'show' class when the timer times out.
-    
-    
-
+// TODO: call the toggleVisibility function so that it adds the 'show' class.
+// TODO: call the toggleVisibility function so that it removes the 'show' class when the timer times out.    
 /**
 *
 * Adds or removes the 'show' class that is defined in styles.css to 
@@ -201,14 +175,14 @@ function toggleVisibility(hole) {
 *
 */
 function updateScore() {
-   points += 1;
+   points++;
    score.textContent = points; 
   return points; 
 }
 
 function clearScore() {
    points = 0
-  score.textContent = points; 
+   score.textContent = points; 
    return points;
 }
 
@@ -244,10 +218,12 @@ function startTimer() {
 * the moles.
 *
 */
-function whack(event) {
+function whack(mole) {
     console.log("whack!")
     updateScore();
-    incrementAndUpdateScoreboard();
+    document.getElementById('hitSound').play();
+    mole.classList.remove('show');
+    return points;
 }
 
 /**
@@ -256,9 +232,9 @@ function whack(event) {
 * for an example on how to set event listeners using a for loop.
 */
 function setEventListeners(){
-  moles.forEach(
-    mole => mole.addEventListener('click', whack)
-  );
+  moles.forEach(mole => {
+      mole.addEventListener('click', () => whack(mole));
+  });
   return moles;
 }
 
@@ -284,12 +260,8 @@ function setDuration(duration) {
 *
 */
 function gameOver() {
-  if (time > 0) {
-    timeoutId = showUp();
-    return timeoutId;
-  } else {
-    gameStopped = stopGame();
-    return gameStopped;
+  clearInterval(timer);
+  return "game stopped";
   }
 }
 
@@ -300,8 +272,10 @@ function gameOver() {
 *
 */
 function startGame(){
-   setDuration(10);
-   showUp();
+    setDuration(10);
+    clearScore();
+    startTimer();
+    showUp();
    return "game started";
 }
 
