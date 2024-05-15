@@ -7,6 +7,9 @@ const timerDisplay = document.querySelector('#timer');
 
 let time = 0;
 let timer;
+let lastHole = 0;
+let points = 0;
+let difficulty = "hard";
 
 /**
  * Generates a random integer within a range.
@@ -68,12 +71,15 @@ function setDelay(difficulty) {
  * const holes = document.querySelectorAll('.hole');
  * chooseHole(holes) //> returns one of the 9 holes that you defined
  */
-function chooseHole(holes) {
+function chooseHole(holes, lastHole = null) {
      // TODO: Write your code here.
-    const index = randomInteger(0, holes.length - 1);
+    if (holes.length <= 1) {
+        throw new Error("The list of holes must contain at least two elements.");
+    }
+    const index = randomInteger(0, 8);
     const hole = holes[index]; 
     if (hole === lastHole) {
-        return chooseHole(holes);
+        return chooseHole(holes, lastHole);
     }
     lastHole = hole;
     return hole; 
@@ -122,7 +128,8 @@ function gameOver() {
 */
 function showUp() {
     const delay = setDelay(difficulty); 
-    const hole = chooseHole(holes); 
+    const hole = chooseHole(holes, lastHole);
+    lastHole = hole;
     return showAndHide(hole, delay);
 }
 
@@ -218,7 +225,7 @@ function startTimer() {
 * the moles.
 *
 */
-function whack(mole) {
+function whack(event) {
     console.log("whack!")
     updateScore();
     document.getElementById('hitSound').play();
@@ -232,9 +239,9 @@ function whack(mole) {
 * for an example on how to set event listeners using a for loop.
 */
 function setEventListeners(){
-  moles.forEach(mole => {
-      mole.addEventListener('click', () => whack(mole));
-  });
+  moles.forEach(
+      mole => mole.addEventListener('click', whack);
+  );
   return moles;
 }
 
