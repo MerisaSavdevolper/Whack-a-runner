@@ -6,6 +6,9 @@ const score = document.querySelector('#score');
 const timerDisplay = document.querySelector('#timer');
 
 let time = 0;
+let points = 0;
+let difficulty = "hard";
+let lastHole = 0;
 let timer;
 
 /**
