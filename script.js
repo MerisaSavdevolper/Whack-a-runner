@@ -1,5 +1,5 @@
-const holes = document.querySelectorAll('.hole');
-const moles = document.querySelectorAll('.mole');
+const holes = document.querySelectorAll('#hole');
+const moles = document.querySelectorAll('#mole');
 const startButton = document.querySelector('#startButton');
 // TODO: Add the missing query selectors:
 const score = document.querySelector('#score'); 
@@ -259,7 +259,7 @@ function setDuration(duration) {
 * timer using clearInterval. Returns "game stopped".
 *
 */
-function gameOver() {
+function StopGame() {
   clearInterval(timer);
   return "game stopped";
   }
@@ -279,8 +279,9 @@ function startGame(){
    return "game started";
 }
 
-startButton.addEventListener("click", startGame);
-
+startButton.addEventListener("click", function(){
+    startGame();
+});
 
 setEventListeners();
 
