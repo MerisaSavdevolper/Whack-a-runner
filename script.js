@@ -7,6 +7,9 @@ const timerDisplay = document.querySelector('#timer');
 
 let time = 0;
 let timer;
+let lastHole = 0;
+let points = 0;
+let difficulty = "hard";
 
 /**
  * Generates a random integer within a range.
@@ -218,7 +221,7 @@ function startTimer() {
 * the moles.
 *
 */
-function whack(mole) {
+function whack(event) {
     console.log("whack!")
     updateScore();
     document.getElementById('hitSound').play();
@@ -232,9 +235,9 @@ function whack(mole) {
 * for an example on how to set event listeners using a for loop.
 */
 function setEventListeners(){
-  moles.forEach(mole => {
-      mole.addEventListener('click', () => whack(mole));
-  });
+  moles.forEach(
+    mole => mole.addEventListener('click', whack)
+  );
   return moles;
 }
 
@@ -259,7 +262,7 @@ function setDuration(duration) {
 * timer using clearInterval. Returns "game stopped".
 *
 */
-function gameOver() {
+function stopGame() {
   clearInterval(timer);
   return "game stopped";
   }
@@ -279,7 +282,9 @@ function startGame(){
    return "game started";
 }
 
-startButton.addEventListener("click", startGame);
+startButton.addEventListener("click", function() {
+    startGame();
+});
 
 
 setEventListeners();
